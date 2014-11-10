@@ -83,6 +83,39 @@ void Buffer::DrawFilledTriangle(const Coord2D p1, const Coord2D p2,
 		const Coord2D p3, const Color c1, const Color c2, const Color c3)
 {
 	// completer ici
+	Coord2D m1, m2;
+	Color color1, color2;
+	double wa, wb, wc;
+
+    scanLineComputer.Init();
+    scanLineComputer.Compute(p1, p2, p3);
+    for(int i=scanLineComputer.ymin; i<=scanLineComputer.ymax; i++){
+        // point à gauche
+        m1 = Coord2D(scanLineComputer.left.data[i],i);
+
+        wa = scanLineComputer.leftweight.data[i].data[0];
+        wb = scanLineComputer.leftweight.data[i].data[1];
+        wc = scanLineComputer.leftweight.data[i].data[2];
+
+        color1.red =  (1/(wa+ wb + wc)) * (wa*c1.red + wb*c2.red + wc*c3.red);
+        color1.blue =  (1/(wa+ wb + wc)) * (wa*c1.blue + wb*c2.blue + wc*c3.blue);
+        color1.green =  (1/(wa+ wb + wc)) * (wa*c1.green + wb*c2.green + wc*c3.green);
+
+        // point à droite
+        m2 = Coord2D(scanLineComputer.right.data[i], i);
+        wa = scanLineComputer.rightweight.data[i].data[0];
+        wb = scanLineComputer.rightweight.data[i].data[1];
+        wc = scanLineComputer.rightweight.data[i].data[2];
+
+        color2.red =  (1/(wa+ wb + wc)) * (wa*c1.red + wb*c2.red + wc*c3.red);
+        color2.blue =  (1/(wa+ wb + wc)) * (wa*c1.blue + wb*c2.blue + wc*c3.blue);
+        color2.green =  (1/(wa+ wb + wc)) * (wa*c1.green + wb*c2.green + wc*c3.green);
+        DrawLine(m1, m2, color1, color2);
+    }
+
+
+
+
 }
 
 void Buffer::DrawPhongTriangle(const Coord2D p1, const Coord2D p2,
