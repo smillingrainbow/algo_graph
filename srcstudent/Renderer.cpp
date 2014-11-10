@@ -12,36 +12,30 @@ void Renderer::DrawFilaire()
     Face f;
     Coord2D m1, m2, m3;
 
-    // Transformation du Drawable
-    // Calcul de ses informations dans le repère de la camera
-
-    Camera cam;
-    // Calcul la position et l'orientation de la caméra pour que l'objet drawable exprimé dans le repère global soit entièrement visible.
-    cam.SetFromDrawable(*drawable);
-    Rotation rot;
-    effectiveDrawable->Compute(*drawable, cam, rot);
-
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
 	for(int i=0; i< drawable->faces.size; i++){
         f = drawable->faces.data[i];
         //coord  et couleur point 1
-        p1 = drawable->points.data[f.index1];
+//        p1 = drawable->points.data[f.index1];
         c1 = drawable->pointColors.data[f.index1];
-        m1.x = p1.x;
-        m1.y = p1.y;
+        m1 = renderable.points2D.data[f.index1];
+//        m1.x = p1.x;
+//        m1.y = p1.y;
 
         // coord  et couleur point 2
-        p2 = drawable->points.data[f.index2];
+//        p2 = drawable->points.data[f.index2];
         c2 = drawable->pointColors.data[f.index2];
-        m2.x = p2.x;
-        m2.y = p2.y;
+        m2 = renderable.points2D.data[f.index2];
+//        m2.x = p2.x;
+//        m2.y = p2.y;
 
         // coord  et couleur point 3
-        p3 = drawable->points.data[f.index3];
+//        p3 = drawable->points.data[f.index3];
         c3 = drawable->pointColors.data[f.index3];
-        m3.x = p3.x;
-        m3.y = p3.y;
+        m3 = renderable.points2D.data[f.index3];
+//        m3.x = p3.x;
+//        m3.y = p3.y;
 
 
        buffer->DrawLine(m1, m2, c1, c2);
@@ -60,40 +54,32 @@ void Renderer::DrawFilaireCache()
     Coord2D m1, m2, m3;
     int index;
 
-    // Transformation du Drawable
-    // Calcul de ses informations dans le repère de la camera
-
-    Camera cam;
-    // Calcul la position et l'orientation de la caméra pour que l'objet drawable exprimé dans le repère global soit entièrement visible.
-    cam.SetFromDrawable(*drawable);
-    Rotation rot;
-    effectiveDrawable->Compute(*drawable, cam, rot);
-
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
-	cout<< "debut boucle affichage"<<endl;
-	cout<< "taille : " << effectiveDrawable->sortedVisibleFaces.size << endl;
 	for(int i=(effectiveDrawable->sortedVisibleFaces.size -1); i>=0; i--){
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
 
         f = drawable->faces.data[index];
         //coord  et couleur point 1
-        p1 = drawable->points.data[f.index1];
+        //p1 = drawable->points.data[f.index1];
         c1 = drawable->pointColors.data[f.index1];
-        m1.x = p1.x;
-        m1.y = p1.y;
+        m1 = renderable.points2D.data[f.index1];
+        //m1.x = p1.x;
+        //m1.y = p1.y;
 
         // coord  et couleur point 2
-        p2 = drawable->points.data[f.index2];
+        //p2 = drawable->points.data[f.index2];
         c2 = drawable->pointColors.data[f.index2];
-        m2.x = p2.x;
-        m2.y = p2.y;
+        m2 = renderable.points2D.data[f.index2];
+        //m2.x = p2.x;
+        //m2.y = p2.y;
 
         // coord  et couleur point 3
-        p3 = drawable->points.data[f.index3];
+        //p3 = drawable->points.data[f.index3];
         c3 = drawable->pointColors.data[f.index3];
-        m3.x = p3.x;
-        m3.y = p3.y;
+        m3 = renderable.points2D.data[f.index3];
+        //m3.x = p3.x;
+        //m3.y = p3.y;
 
 
        buffer->DrawLine(m1, m2, c1, c2);
