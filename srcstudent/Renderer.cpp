@@ -53,7 +53,7 @@ void Renderer::DrawFilaireCache()
 
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
-	for(int i=(effectiveDrawable->sortedVisibleFaces.size -1); i>=0; i--){
+	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1); i++){
 
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
 
@@ -96,7 +96,7 @@ void Renderer::DrawFacePleine()
 
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
-	for(int i=(effectiveDrawable->sortedVisibleFaces.size -1); i>=0; i--){
+	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1); i++){
 
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
 
@@ -140,7 +140,7 @@ void Renderer::DrawLambert()
     Color light;
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
-	for(int i=(effectiveDrawable->sortedVisibleFaces.size -1); i>=0; i--){
+	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1); i++){
 
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
 
@@ -187,7 +187,7 @@ void Renderer::DrawGouraud()
     Color light1, light2, light3;
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
-	for(int i=(effectiveDrawable->sortedVisibleFaces.size -1); i>=0; i--){
+	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1);i++){
 
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
 
@@ -237,7 +237,7 @@ void Renderer::DrawPhong()
     int index;
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
-	for(int i=(effectiveDrawable->sortedVisibleFaces.size -1); i>=0; i--){
+	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1); i++){
 
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
 

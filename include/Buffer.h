@@ -58,7 +58,7 @@ public:
 	void DrawFilledTriangle(const Coord2D p1, const Coord2D p2,
 			const Coord2D p3, const Color c1, const Color c2, const Color c3);
 	/** Dessine un triangle dont les sommets sont p1,p2,p3 et dont les couleurs de sommets sont c1,c2,c3.
-	 * posi1,posi2,posi3 sont les coordonnées 3D dans le repère camérades sommets du triangle.
+	 * posi1,posi2,posi3 sont les coordonnées 3D dans le repère caméra des sommets du triangle.
 	 * normal1, normal2,normal3 sont les trois normales associées.
 	 * ambientLight donne les composantes de la lumière ambiente.
 	 * pointLight donne les composantes du point lumineux. */

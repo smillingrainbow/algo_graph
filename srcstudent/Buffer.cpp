@@ -112,9 +112,10 @@ void Buffer::DrawFilledTriangle(const Coord2D p1, const Coord2D p2,
         color2.green =  (1/(wa+ wb + wc)) * (wa*c1.green + wb*c2.green + wc*c3.green);
         DrawLine(m1, m2, color1, color2);
     }
-
-
-
+    // dession des contours
+    DrawLine(p1, p2, c1, c2);
+    DrawLine(p1, p3, c1, c3);
+    DrawLine(p2, p3, c2, c3);
 
 }
 
@@ -126,52 +127,66 @@ void Buffer::DrawPhongTriangle(const Coord2D p1, const Coord2D p2,
 {
 	// compléter ici
     Coord2D rightPt, leftPt, currentPt;
-    Coord3D interpolateNormal, currentNormal, currentPos, interpolatePt;
-	Color color1, interpolateColor, currentColor;
+    Coord3D currentNormal, currentPos;
+	Color currentColor;
 	Array<double> leftWeight;
 	Array<double> rightWeight;
-	Array<double> weight;
-	double weight1;
+	Coord3D ptInterpolateLeft, ptInterpolateRight, normalInterpolateLeft, normalInterpolateRight;
+	Color colorRight, colorLeft;
 
     scanLineComputer.Init();
     scanLineComputer.Compute(p1, p2, p3);
+
     for(int i=scanLineComputer.ymin; i<=scanLineComputer.ymax; i++){
         // point à gauche
-        rightPt = Coord2D(scanLineComputer.left.data[i],i);
+        rightPt = Coord2D(scanLineComputer.right.data[i],i);
         rightWeight = scanLineComputer.rightweight.data[i];
         // point à droite
-        leftPt = Coord2D(scanLineComputer.right.data[i], i);
+        leftPt = Coord2D(scanLineComputer.left.data[i], i);
         leftWeight = scanLineComputer.leftweight.data[i];
 
-        if(rightPt.x == leftPt.x){
-            color1 = (c1*leftWeight.data[0] + c2*leftWeight.data[1] + c3*leftWeight.data[2]) *
-                    pointLight.GetColor(posi1*leftWeight.data[0]+posi2*leftWeight.data[1] + posi3*leftWeight.data[2],
-                                        normal1*leftWeight.data[0] + normal2*leftWeight.data[1] + normal3*leftWeight.data[2])
-                    + ambientLight.ambientColor;
-            SetPoint(leftPt, color1);
-        }
-        else{
-            weight1 = 1/leftPt.Distance(rightPt);
-            weight.data[0] = weight1 * (rightWeight.data[0] - leftWeight.data[0]);
-            weight.data[1] = weight1 * (rightWeight.data[1] - leftWeight.data[1]);
-            weight.data[2] = weight1 * (rightWeight.data[2] - leftWeight.data[2]);
-            interpolatePt = posi1*weight.data[0] + posi2*weight.data[1] + posi3*weight.data[2];
-            interpolateNormal = normal1*weight.data[0] + normal2*weight.data[1] + normal3*weight.data[2];
-            interpolateColor = c1*weight.data[0] + c2*weight.data[1] + c3*weight.data[2];
+        colorRight = (c1*rightWeight.data[0] + c2*rightWeight.data[1] + c3*rightWeight.data[2])
+                        * (1/(rightWeight.data[0]+ rightWeight.data[1] + rightWeight.data[2]));
 
-            currentPt = leftPt;
-            currentColor = c1*weight.data[0] + c2*weight.data[1] + c3*weight.data[2];
-            currentNormal = normal1*weight.data[0] + normal2*weight.data[1] + normal3*weight.data[2];
-            currentPos = posi1*weight.data[0] + posi2*weight.data[1] + posi3*weight.data[2];
-            for(currentPt.y; currentPt.y <= rightPt.y; currentPt.y++){
-                SetPoint(currentPt,
-                         currentColor * pointLight.GetColor(currentPos, currentNormal)
-                         + ambientLight.ambientColor);
-                currentColor = currentColor + interpolateColor;
-                currentNormal += interpolateNormal;
-                currentPos = interpolatePt;
-            }
+        colorLeft = (c1*leftWeight.data[0] + c2*leftWeight.data[1] + c3*leftWeight.data[2])
+                     * (1/(leftWeight.data[0]+ leftWeight.data[1] + leftWeight.data[2]));
+
+        ptInterpolateLeft = (posi1*leftWeight.data[0]+ posi2*leftWeight.data[1] + posi3*leftWeight.data[2])
+                                * (1/(leftWeight.data[0]+ leftWeight.data[1] + leftWeight.data[2]));
+
+        ptInterpolateRight = (posi1*rightWeight.data[0]+ posi2*rightWeight.data[1] + posi3*rightWeight.data[2])
+                                * (1/(rightWeight.data[0]+ rightWeight.data[1] + rightWeight.data[2]));
+
+        normalInterpolateLeft = (normal1*leftWeight.data[0] + normal2*leftWeight.data[1] + normal3*leftWeight.data[2])
+                                * (1/(leftWeight.data[0]+ leftWeight.data[1] + leftWeight.data[2]));
+
+        normalInterpolateRight = (normal1*rightWeight.data[0] + normal2*rightWeight.data[1] + normal3*rightWeight.data[2])
+                                    * (1/(rightWeight.data[0]+ rightWeight.data[1] + rightWeight.data[2]));
+
+        for(int i = leftPt.x; i <= rightPt.x; i++){
+            double wa = 1 - (leftPt.Distance(currentPt) / leftPt.Distance(rightPt));
+            double wb = 1- wa;
+
+            currentColor.red = (1/(wa+ wb)) * (wa*colorLeft.red + wb*colorRight.red);
+            currentColor.green = (1/(wa+ wb)) * (wa*colorLeft.green + wb*colorRight.green);
+            currentColor.blue = (1/(wa+ wb)) * (wa*colorLeft.blue + wb*colorRight.blue);
+
+            currentPos.x = (1/(wa+ wb)) * (wa*ptInterpolateLeft.x + wb*ptInterpolateRight.x);
+            currentPos.y = (1/(wa+ wb)) * (wa*ptInterpolateLeft.y + wb*ptInterpolateRight.y);
+            currentPos.z = (1/(wa+ wb)) * (wa*ptInterpolateLeft.z + wb*ptInterpolateRight.z);
+
+            currentNormal.x = (1/(wa+ wb)) * (wa*normalInterpolateLeft.x + wb*normalInterpolateRight.x);
+            currentNormal.y = (1/(wa+ wb)) * (wa*normalInterpolateLeft.y + wb*normalInterpolateRight.y);
+            currentNormal.z = (1/(wa+ wb)) * (wa*normalInterpolateLeft.z + wb*normalInterpolateRight.z);
+
+            currentPt.x = i ;
+            currentPt.y = leftPt.y;
+            SetPoint(currentPt,
+                     currentColor * (pointLight.GetColor(currentPos, currentNormal)+ ambientLight.ambientColor));
+            currentPt.x = i;
         }
+        SetPoint(rightPt, colorRight * (pointLight.GetColor(ptInterpolateRight, normalInterpolateRight)+ambientLight.ambientColor));
+        SetPoint(leftPt, colorLeft * (pointLight.GetColor(ptInterpolateLeft, normalInterpolateLeft)+ambientLight.ambientColor));
     }
 
 
