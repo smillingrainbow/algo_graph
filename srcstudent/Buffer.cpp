@@ -10,6 +10,7 @@ void Buffer::DrawLine(const Coord2D p1, const Coord2D p2, const Color c1,
 	int longX = p2.x - p1.x, longY = p2.y - p1.y;
     int const2 = 0, const1 = 0, critere = 0;
     Color c = c1;
+    double depth;
     double wa = 0.0, wb = 0.0;
     int incX = 0, incY = 0;
     int compteur = 0;
@@ -42,7 +43,8 @@ void Buffer::DrawLine(const Coord2D p1, const Coord2D p2, const Color c1,
             c.blue =  (1/(wa+ wb)) * (wa*c1.blue + wb*c2.blue);
             c.green =  (1/(wa+ wb)) * (wa*c1.green + wb*c2.green);
 
-            SetPoint(Coord2D(x, y), c);
+            depth = (1/(wa+ wb)) * (wa*p1.depth + wb*p2.depth);
+            SetPoint(Coord2D(x, y, depth), c);
             if(critere > 0){
                 y = y + incY;
                 critere = critere + const1;
@@ -65,7 +67,9 @@ void Buffer::DrawLine(const Coord2D p1, const Coord2D p2, const Color c1,
             c.blue =  (1/(wa+ wb)) * (wa*c1.blue + wb*c2.blue);
             c.green =  (1/(wa+ wb)) * (wa*c1.green + wb*c2.green);
 
-            SetPoint(Coord2D(x, y), c);
+            depth = (1/(wa+ wb)) * (wa*p1.depth + wb*p2.depth);
+
+            SetPoint(Coord2D(x, y, depth), c);
             if(critere > 0){
                 x = x + incX;
                 critere = critere + const1;
@@ -133,7 +137,6 @@ void Buffer::DrawPhongTriangle(const Coord2D p1, const Coord2D p2,
 	Array<double> rightWeight;
 	Coord3D ptInterpolateLeft, ptInterpolateRight, normalInterpolateLeft, normalInterpolateRight;
 	Color colorRight, colorLeft;
-
     scanLineComputer.Init();
     scanLineComputer.Compute(p1, p2, p3);
 
@@ -181,6 +184,7 @@ void Buffer::DrawPhongTriangle(const Coord2D p1, const Coord2D p2,
 
             currentPt.x = i ;
             currentPt.y = leftPt.y;
+
             SetPoint(currentPt,
                      currentColor * (pointLight.GetColor(currentPos, currentNormal)+ ambientLight.ambientColor));
             currentPt.x = i;
