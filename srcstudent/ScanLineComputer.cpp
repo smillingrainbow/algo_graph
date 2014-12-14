@@ -4,14 +4,13 @@
 #include <FastMath.h>
 #include <limits.h>
 
-
-
+/***************************************************
+ * AddEdge : Fonction qui utilise la méthode de Bresenham pour calculer les points du segment [p1,p2] 
+ *           et on les ajoute via la méthode AddPoint.
+ * **************************************************/
 void ScanLineComputer::AddEdge(const Coord2D p1, const Coord2D p2,
 															 const int index1, const int index2)
 {
-	// compléter ici : calculer les points de la bordure et appeler AddPoint
-	// on utitlise la méthode de Bresenheim pour calculer les points du segment [p1,p2] et on les ajoute via la méthode AddPoint
-
     int y = p1.y, x = p1.x;
 	int longX = p2.x - p1.x, longY = p2.y - p1.y;
     int const2 = 0, const1 = 0, critere = 0;
@@ -70,9 +69,9 @@ void ScanLineComputer::AddEdge(const Coord2D p1, const Coord2D p2,
             y = y +incY;
         }
     }
-
-
-
 }
+
+
+
 
 
