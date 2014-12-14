@@ -3,9 +3,7 @@
 /** Initialise le Z-Buffer (les pixels sont à une profondeur infinie initialement) */
 void ZBuffer::Init()
 {
-    // completer ici : initialisation du buffer des profondeurs
-
-    // initialisation de la matrice de profondeur  à l'infini si le z-buffer est activé
+    // Initialisation de la matrice de profondeur  à l'infini si le z-buffer est activé
     double infinity = DBL_MAX;
     if(enabled){
         for(int i=0; i<depths.size; i++){
@@ -23,7 +21,7 @@ bool ZBuffer::ReplaceCurrent(const Coord2D p)
 {
     bool changePoint;
     if(enabled){
-        // si le point est hors limite
+        // Si le point est hors limite
         if(p.y > depths.size){
             changePoint = false;
         }
@@ -31,9 +29,9 @@ bool ZBuffer::ReplaceCurrent(const Coord2D p)
             changePoint = false;
         }
 
-        // si le point est plus proche
+        // Si le point est plus proche
         if(depths.data[p.y].data[p.x] >= p.depth){
-            // mise à jour des profondeurs
+            // Mise à jour des profondeurs
             depths.data[p.y].data[p.x] = p.depth;
             changePoint = true;
         }
@@ -41,11 +39,9 @@ bool ZBuffer::ReplaceCurrent(const Coord2D p)
             changePoint = false;
         }
     }
-    // si le z-buffer est désactivé on ne fait rien
+    // Si le z-buffer est désactivé on ne fait rien
     else{
         changePoint = true;
     }
-
-
     return changePoint;
 }
