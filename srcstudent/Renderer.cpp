@@ -4,9 +4,11 @@
 #include <stdio.h>
 using namespace std;
 
+/***********************************************
+* DrawFilaire :Fonction qui dessine tous les segments qui compose un objet 3D
+***********************************************/
 void Renderer::DrawFilaire()
 {
-	// compléter ici
     Color c1, c2, c3;
     Face f;
     Coord2D m1, m2, m3;
@@ -16,15 +18,16 @@ void Renderer::DrawFilaire()
 	for(int i=0; i< drawable->faces.size; i++){
 
         f = drawable->faces.data[i];
-        //coord  et couleur point 1
+        // Coordonnées et couleur point 1
         m1 = renderable.points2D.data[f.index1];
 
-        // coord  et couleur point 2
+        // Coordonnées et couleur point 2
         m2 = renderable.points2D.data[f.index2];
 
-        // coord  et couleur point 3
+        // Coordonnées et couleur point 3
         m3 = renderable.points2D.data[f.index3];
 
+        // On colore selon les cas ou le kaledioscope est activé ou désactivé
         if(drawable->colorOnFace){
             c1 = drawable->faceColors.data[i];
             c2 = drawable->faceColors.data[i];
@@ -36,37 +39,44 @@ void Renderer::DrawFilaire()
             c3 = drawable->pointColors.data[f.index3];
         }
 
+
+       // On dessine les segments qui définissent les faces de l'objet
        buffer->DrawLine(m1, m2, c1, c2);
        buffer->DrawLine(m1, m3, c1, c3);
        buffer->DrawLine(m2, m3, c2, c3);
 	}
-
-
 }
+
+
+
+/***********************************************
+* DrawFilaireCache : Fonction qui dessine tous les segments visibles qui compose un objet 3D , par rapport à la caméra
+***********************************************/
 void Renderer::DrawFilaireCache()
 {
-	// compléter ici
     Color c1, c2, c3;
     Face f;
     Coord2D m1, m2, m3;
     int index;
 
-	// L'objet a dessiné est dans l'attribut drawable
-	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
+	// L'objet a dessiner est dans l'attribut drawable
+	// On parcourt le tableau contenant la liste des faces/triangles a dessiné
 	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1); i++){
 
+        // On récupère uniquement les faces visibles accessibles selon l'orientation de la caméra sur notre objet
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
-
         f = drawable->faces.data[index];
-        //coord  et couleur point 1
+
+        // Coordonnées et couleur point 1
         m1 = renderable.points2D.data[f.index1];
 
-        // coord  et couleur point 2
+        // Coordonnées et couleur point 2
         m2 = renderable.points2D.data[f.index2];
 
-        // coord  et couleur point 3
+        // Coordonnées et couleur point 3
         m3 = renderable.points2D.data[f.index3];
 
+         // On colore selon les cas ou le kaledioscope est activé ou désactivé
         if(drawable->colorOnFace){
             c1 = drawable->faceColors.data[index];
             c2 = drawable->faceColors.data[index];
@@ -78,39 +88,43 @@ void Renderer::DrawFilaireCache()
             c3 = drawable->pointColors.data[f.index3];
         }
 
-
+       // On dessine les segments qui définissent les faces de l'objet
        buffer->DrawLine(m1, m2, c1, c2);
        buffer->DrawLine(m1, m3, c1, c3);
        buffer->DrawLine(m2, m3, c2, c3);
 	}
-
-
 }
+
+
+
+/***********************************************
+* Fonction qui dessine un objet 3D avec des faces pleines
+***********************************************/
 void Renderer::DrawFacePleine()
 {
-	// compléter ici
     Color c1, c2, c3;
     Face f;
     Coord2D m1, m2, m3;
     int index;
 
 	// L'objet a dessiné est dans l'attribut drawable
-	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
+	// On parcourt le tableau contenant la liste des faces/triangles a dessiné
 	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1); i++){
 
+        // On se concentrera sur les faces visibles de notre objet par la caméra
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
-
         f = drawable->faces.data[index];
-        //coord  et couleur point 1
+
+        // Coordonnées et couleur point 1
         m1 = renderable.points2D.data[f.index1];
 
-        // coord  et couleur point 2
+        // Coordonnées et couleur point 2
         m2 = renderable.points2D.data[f.index2];
 
-        // coord  et couleur point 3
+        // Coordonnées et couleur point 3
         m3 = renderable.points2D.data[f.index3];
 
-        // Kaledioscope activé/désactivé
+         // On colore selon les cas ou le kaledioscope est activé ou désactivé
         if(drawable->colorOnFace){
             c1 = drawable->faceColors.data[index];
             c2 = drawable->faceColors.data[index];
@@ -122,46 +136,51 @@ void Renderer::DrawFacePleine()
             c3 = drawable->pointColors.data[f.index3];
         }
 
-
+        // On dessine les faces en remplissant le volume de celles-ci
        buffer->DrawFilledTriangle(m1, m2, m3, c1, c2, c3);
 	}
-
-
-
 }
 
+
+
+/***********************************************
+* DrawLambert : Fonction qui dessine un objet 3D avec des faces pleines
+*               Et qui applique la technique lambert pour l'éclairage de notre objet
+*               ( selon la normalisation de la couleur par rapport à la moyenne des sommet d'une face )
+***********************************************/
 void Renderer::DrawLambert()
 {
-	// compléter ici
 	Color c1, c2, c3;
     Face f;
     Coord2D m1, m2, m3;
     int index;
     Color light;
+
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
 	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1); i++){
 
+         // On se concentrera sur les faces visibles de notre objet par la caméra
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
-
         f = drawable->faces.data[index];
-        // normalisation par rapport à la moyenne des sommets
+
+        // On réalise la normalisation de la couleur par rapport à la moyenne des sommets
         light = pointLight.GetColor((effectiveDrawable->points.data[f.index1] +
                                     effectiveDrawable->points.data[f.index2] +
                                     effectiveDrawable->points.data[f.index3])*(1./3.),
                                     effectiveDrawable->faceNormals.data[index])
                                     + ambientLight.ambientColor;
 
-        //coord  et couleur point 1
+          // Coordonnées et couleur point 1
         m1 = renderable.points2D.data[f.index1];
 
-        // coord  et couleur point 2
+          // Coordonnées et couleur point 2
         m2 = renderable.points2D.data[f.index2];
 
-        // coord  et couleur point 3
+        // Coordonnées et couleur point 3
         m3 = renderable.points2D.data[f.index3];
 
-        // Kaledioscope activé/désactivé
+        // On colore selon les cas ou le kaledioscope est activé ou désactivé
         if(drawable->colorOnFace){
             c1 = drawable->faceColors.data[index] * light;
             c2 = drawable->faceColors.data[index] * light;
@@ -173,26 +192,36 @@ void Renderer::DrawLambert()
             c3 = drawable->pointColors.data[f.index3] * light;
         }
 
-
+       // On dessine les faces en remplissant le volume de celles-ci
        buffer->DrawFilledTriangle(m1, m2, m3, c1, c2, c3);
 	}
 }
+
+
+
+
+/***********************************************
+* DrawGouraud : Fonction qui dessine un objet 3D avec des faces pleines
+*               Et qui applique la technique lambert pour l'éclairage de notre objet
+*               ( selon la normalisation de la couleur par rapport à chaque sommets )
+***********************************************/
 void Renderer::DrawGouraud()
 {
-	// compléter ici
     Color c1, c2, c3;
     Face f;
     Coord2D m1, m2, m3;
     int index;
     Color light1, light2, light3;
+
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
 	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1);i++){
 
+        // On se concentrera sur les faces visibles de notre objet par la caméra
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
-
         f = drawable->faces.data[index];
-        // normalisation de la couleur par rapport à chaque sommet
+
+        // On réalise normalisation de la couleur par rapport à chaque sommet
         light1 = pointLight.GetColor(effectiveDrawable->points.data[f.index1],
                                     effectiveDrawable->pointNormals.data[f.index1])
                                     + ambientLight.ambientColor;
@@ -203,16 +232,16 @@ void Renderer::DrawGouraud()
                                     effectiveDrawable->pointNormals.data[f.index3])
                                     + ambientLight.ambientColor;
 
-        //coord  et couleur point 1
+        // Coordonnées et couleur point 1
         m1 = renderable.points2D.data[f.index1];
 
-        // coord  et couleur point 2
+        // Coordonnées et couleur point 2
         m2 = renderable.points2D.data[f.index2];
 
-        // coord  et couleur point 3
+        // Coordonnées et couleur point 3
         m3 = renderable.points2D.data[f.index3];
 
-        // Kaledioscope activé/désactivé
+        // On colore selon les cas ou le kaledioscope est activé ou désactivé
         if(drawable->colorOnFace){
             c1 = drawable->faceColors.data[index] * light1;
             c2 = drawable->faceColors.data[index] * light2;
@@ -224,35 +253,42 @@ void Renderer::DrawGouraud()
             c3 = drawable->pointColors.data[f.index3] * light3;
         }
 
-
+    // On dessine les faces en remplissant le volume de celles-ci
        buffer->DrawFilledTriangle(m1, m2, m3, c1, c2, c3);
 	}
 }
+
+
+
+/***********************************************
+* DrawPhong : Fonction qui dessine un objet 3D avec des faces pleines
+*               Et qui applique la technique Phong pour l'éclairage de notre objet
+***********************************************/
 void Renderer::DrawPhong()
 {
-	// compléter ici
     Color c1, c2, c3;
     Face f;
     Coord2D m1, m2, m3;
     int index;
+
 	// L'objet a dessiné est dans l'attribut drawable
 	// on parcourt le tableau contenant la liste des faces/triangles a dessiné
 	for(int i=0; i<=(effectiveDrawable->sortedVisibleFaces.size -1); i++){
 
+        // On se concentrera sur les faces visibles de notre objet par la caméra
         index = effectiveDrawable->sortedVisibleFaces.data[i].index;
-
         f = drawable->faces.data[index];
 
-        //coord  et couleur point 1
+         // Coordonnées et couleur point 1
         m1 = renderable.points2D.data[f.index1];
 
-        // coord  et couleur point 2
+         // Coordonnées et couleur point 2
         m2 = renderable.points2D.data[f.index2];
 
-        // coord  et couleur point 3
+         // Coordonnées et couleur point 3
         m3 = renderable.points2D.data[f.index3];
 
-        // Kaledioscope activé/désactivé
+       // On colore selon les cas ou le kaledioscope est activé ou désactivé
         if(drawable->colorOnFace){
             c1 = drawable->faceColors.data[index];
             c2 = drawable->faceColors.data[index];
@@ -264,6 +300,7 @@ void Renderer::DrawPhong()
             c3 = drawable->pointColors.data[f.index3];
         }
 
+        // On fait appel à la fonction Phong qui est codé dans la classe 'Buffer' avec les parammètres adéquats
         buffer->DrawPhongTriangle(m1, m2, m3,
                                   c1, c2, c3,
                                   effectiveDrawable->points.data[f.index1], effectiveDrawable->points.data[f.index2], effectiveDrawable->points.data[f.index3],
